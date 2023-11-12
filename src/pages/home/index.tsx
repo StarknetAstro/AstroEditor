@@ -45,7 +45,7 @@ const pages = [
 
 const Sidebar = ({ page, setPage }: {page: PageEnum; setPage: (v: PageEnum) => void}) => {
     return (
-        <div className={"pb-12"}>
+        <div className={"pb-12 hidden md:block"}>
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
                     <div className="space-y-1">
@@ -231,7 +231,7 @@ export default function Home() {
             </div>
             <div className="editor grid lg:grid-cols-5 flex-1">
                 <Sidebar page={page} setPage={setPage} />
-                <div className="main col-span-3 lg:col-span-4 lg:border-l px-4 py-6 lg:px-8">
+                <div className="main col-span-3 lg:col-span-4 lg:border-l px-4 pt-6 lg:px-8">
                     {page === PageEnum.EDITOR && (
                         <div id="Code" className="h-full flex flex-col">
                             <div className="">
@@ -263,7 +263,7 @@ export default function Home() {
                                     <Button id="Compile" onClick={handleCompile} loading={compileLoading}>Compile</Button>
                                     <Button id="Run" onClick={handleRun} loading={runLoading}>Run</Button>
                                 </div>
-                                <div className="flex gap-4">
+                                <div className="md:flex gap-4 hidden">
                                     <div className={'relative'}>
                                         <Button id="open-file-button" variant={'outline'}>Open File</Button>
                                         <input type="file" onChange={handleOpenFile} className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
