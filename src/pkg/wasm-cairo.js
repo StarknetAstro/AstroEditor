@@ -225,7 +225,6 @@ export function compileStarknetContract(starknet_contract, replace_ids) {
 }
 
 async function __wbg_load(module, imports) {
-    console.log(module);
     if (typeof Response === 'function' && module instanceof Response) {
         if (typeof WebAssembly.instantiateStreaming === 'function') {
             try {
@@ -259,7 +258,7 @@ async function __wbg_load(module, imports) {
 function __wbg_get_imports() {
     const imports = {};
     imports.wbg = {};
-    imports.wbg.__wbg_log_9b2c8c4ceb28b489 = function(arg0, arg1) {
+    imports.wbg.__wbg_log_a176ce88c30149f2 = function(arg0, arg1) {
         console.log(getStringFromWasm0(arg0, arg1));
     };
 
@@ -297,7 +296,6 @@ function initSync(module) {
 }
 
 async function __wbg_init(input) {
-    console.log(input, import.meta.url)
     if (wasm !== undefined) return wasm;
 
     if (typeof input === 'undefined') {

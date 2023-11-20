@@ -83,7 +83,7 @@ export default function Home() {
             label: 'Default',
         }
     ]);
-    const [cairoVersion, setCairoVersion] = useState('1.10');
+    const [cairoVersion, setCairoVersion] = useState('2.0');
     const [compileLoading, setCompileLoading] = useState(false);
     const [runLoading, setRunLoading] = useState(false);
 
@@ -311,10 +311,10 @@ export default function Home() {
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <Label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Cairo version:</Label>
-                                            <Select value={cairoVersion} onChange={setCairoVersion} className={'w-20'} options={[
+                                            <Select disabled value={cairoVersion} onChange={setCairoVersion} className={'w-20'} options={[
                                                 {
                                                     value: '2.0',
-                                                    label: '2.0.1'
+                                                    label: '2.3.1'
                                                 },
                                                 {
                                                     value: '1.10',
