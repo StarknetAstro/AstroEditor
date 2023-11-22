@@ -22,8 +22,6 @@ enum PageEnum {
     ABOUT = "about"
 }
 
-console.log(worker)
-
 const pages = [
     {
         value: PageEnum.EDITOR,
@@ -107,9 +105,6 @@ export default function Home() {
             return;
         }
         setCompileLoading(true);
-        console.log("clicked!");
-        // disable compile button
-        // document.getElementById("Compile").disabled = true;
         if (checkIsContract(cairo_program)) {
             worker.postMessage({
                 data: cairo_program,
@@ -224,7 +219,9 @@ export default function Home() {
         <div className={'p-0 h-[100vh] flex flex-col'}>
             <div className="flex w-full items-center justify-between px-4 py-4 border-b">
                 <div className="flex gap-2 items-center">
-                    <img src={logo} className={'w-10 rounded-lg'} alt=""/>
+                    <a href="https://github.com/StarknetAstro/AstroEditor" target={'_blank'}>
+                        <img src={logo} className={'w-10 rounded-lg'} alt=""/>
+                    </a>
                     <div className="text-primary font-bold text-lg">Astro Editor</div>
                 </div>
                 <ModeToggle/>
