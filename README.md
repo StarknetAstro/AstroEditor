@@ -15,12 +15,12 @@
 ### 🛠️ Build Astro Editor
 
 ```
-npm install
+pnpm install
 ```
 
 Then run 
 ```
-node app.js
+npm run dev
 ```
 For local web instance.
 
