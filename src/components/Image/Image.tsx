@@ -1,7 +1,7 @@
 import React, {cloneElement, forwardRef as baseForwardRef} from "react";
 
-import {UseImageProps, useImage} from "./use-image.tsx";
-import {As, InternalForwardRefRenderFunction, PropsOf, RightJoinProps} from "@/utils/types.tsx";
+import {UseImageProps, useImage} from "./use-image";
+import {As, InternalForwardRefRenderFunction, PropsOf, RightJoinProps} from "@/utils/types";
 
 export interface ImageProps extends Omit<UseImageProps, "showSkeleton"> {}
 

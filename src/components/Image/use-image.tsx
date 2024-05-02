@@ -1,13 +1,13 @@
-import type {ImageVariantProps, ImageSlots} from "./image.ts";
+import type {ImageVariantProps, ImageSlots} from "./image";
 
 import {ImgHTMLAttributes, useCallback} from "react";
-import {HTMLNextUIProps, PropGetter, SlotsToClasses} from "@/utils/types.tsx";
-import {image} from "./image.ts";
+import {HTMLNextUIProps, PropGetter, SlotsToClasses} from "@/utils/types";
+import {image} from "./image";
 import {useDOMRef, ReactRef} from "@/utils/react";
-import {clsx, dataAttr} from "@/utils/utils.ts";
-import {useImage as useImageBase} from "./useImageBase.tsx";
+import {clsx, dataAttr} from "@/utils/utils";
+import {useImage as useImageBase} from "./useImageBase";
 import {useMemo} from "react";
-import {mapPropsVariants} from "@/utils/utils.ts";
+import {mapPropsVariants} from "@/utils/utils";
 type NativeImageProps = ImgHTMLAttributes<HTMLImageElement>;
 
 interface Props extends HTMLNextUIProps<"img"> {

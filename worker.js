@@ -11,10 +11,11 @@ import wasmCairo, { compileStarknetContract, runTests, runCairoProgram, compileC
     console.log(greet("StarknetAstro"))
 })();
 
-window.onmessage = async function (e) {
+async function handleMessage (e) {
     const {data, functionToRun, replaceIds} = e.data;
     await wasmCairo();
     let result;
+    console.log(e.data)
     switch (functionToRun) {
         case "runCairoProgram":
             const {availableGas, printFullMemory, useDBGPrintHint} = e.data;
@@ -24,7 +25,7 @@ window.onmessage = async function (e) {
             result = compileCairoProgram(data, replaceIds);
             break;
         case "compileStarknetContract":
-            result = compileStarknetContract(data, replaceIds);
+            result = compileStarknetContract(data, true, replaceIds);
             break;
         default:
             console.error(`Unexpected function: ${functionToRun}`);
@@ -33,3 +34,5 @@ window.onmessage = async function (e) {
     console.log("text: " + result)
     postMessage(result);
 }
+
+addEventListener('message', handleMessage)

@@ -1,5 +1,5 @@
 import type {VariantProps} from "tailwind-variants";
-import {tv} from "@/utils/utils.ts";
+import {tv} from "@/utils/utils";
 
 
 /**
