@@ -20,6 +20,12 @@ enum PageEnum {
   ABOUT = "about"
 }
 
+enum TabEnum {
+  COMPILETAB = 'COMPILETAB',
+  RUNTAB = "RUNTAB",
+  TESTTAB = "TESTTAB"
+}
+
 const pages = [
   {
     value: PageEnum.EDITOR,
@@ -70,6 +76,7 @@ export default function Home() {
   const [isReplaceIds, setIsReplaceIds] = useState(false);
   const [compileResult, setCompileResult] = useState<string>("");
   const [runResult, setRunResult] = useState<string>("");
+  const [testResult, setTestResult] = useState<string>("");
   const [availableGas, setAvailableGas] = useState("");
   const [printFullMemory, setPrintFullMemory] = useState(false);
   const [useCairoDebugPrint, setUseCairoDebugPrint] = useState(false);
@@ -82,6 +89,8 @@ export default function Home() {
   const [cairoVersion, setCairoVersion] = useState('2.0');
   const [compileLoading, setCompileLoading] = useState(false);
   const [runLoading, setRunLoading] = useState(false);
+  const [testLoading, setTestLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(TabEnum.COMPILETAB)
 
   const workerRef = useRef<Worker>();
 
@@ -133,6 +142,7 @@ export default function Home() {
       console.log(e, 'msg');
       setCompileResult(e.data);
       setCompileLoading(false);
+      setActiveTab(TabEnum.COMPILETAB);
     };
   }
 
@@ -154,6 +164,24 @@ export default function Home() {
     workerRef.current!.onmessage = function(e) {
       setRunResult(e.data);
       setRunLoading(false);
+      setActiveTab(TabEnum.RUNTAB);
+    };
+  }
+
+  const handleRunTest = () => {
+    const cairo_program = textValues[active];
+    if (cairo_program == "" || cairo_program == null || cairo_program == undefined) {
+      return;
+    }
+    setTestLoading(true);
+    workerRef.current?.postMessage({
+      data: cairo_program,
+      functionToRun: "runTest"
+    });
+    workerRef.current!.onmessage = function(e) {
+      setTestResult(e.data);
+      setTestLoading(false);
+      setActiveTab(TabEnum.TESTTAB);
     };
   }
 
@@ -267,8 +295,9 @@ export default function Home() {
                   {/*</div>*/}
                   <div className="toolbar flex justify-between gap-4 my-5">
                     <div className="flex gap-4">
-                      <Button id="Compile" onClick={handleCompile} loading={compileLoading}>Compile</Button>
-                      <Button id="Run" onClick={handleRun} loading={runLoading}>Run</Button>
+                      <Button onClick={handleCompile} loading={compileLoading}>Compile</Button>
+                      <Button onClick={handleRun} loading={runLoading}>Run Cairo</Button>
+                      <Button onClick={handleRunTest} loading={runLoading}>Run Test</Button>
                     </div>
                     <div className="md:flex gap-4 hidden">
                       <div className={'relative'}>
@@ -279,19 +308,26 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="pt-2 flex-1">
-                    <Tabs items={[
+                    <Tabs value={activeTab} onValueChange={v => setActiveTab(v as TabEnum)} items={[
                       {
-                        value: 'Compile Result',
+                        value: TabEnum.COMPILETAB,
                         label: 'Compile Result',
                         content: <div id="CompileResult" className="tabcontent">
                           <Textarea value={compileResult} readOnly id="sierra_program" className="h-[20vh]"></Textarea>
                         </div>
                       },
                       {
-                        value: 'Output',
+                        value: TabEnum.RUNTAB,
                         label: 'Output',
                         content: <div id="RunResult" className="tabcontent">
                           <Textarea readOnly id="run_result" className="h-[20vh]" value={runResult}>No output.</Textarea>
+                        </div>
+                      },
+                      {
+                        value: TabEnum.TESTTAB,
+                        label: 'Test Result',
+                        content: <div className="tabcontent">
+                          <Textarea readOnly className="h-[20vh]" value={testResult}>No output.</Textarea>
                         </div>
                       }
                     ]}

@@ -1,8 +1,6 @@
-// import wasm_bindgen, { greet, compileCairoProgram, runCairoProgram, compileStarknetContract } from '@/pkg/wasm-cairo';
 
 import wasmCairo, { compileStarknetContract, runTests, runCairoProgram, compileCairoProgram, greet } from 'wasm-cairo';
 
-// const url = new URL('/wasm-cairo_bg.wasm', import.meta.url).href;
 
 (async () => {
     await wasmCairo();
@@ -19,13 +17,16 @@ async function handleMessage (e) {
     switch (functionToRun) {
         case "runCairoProgram":
             const {availableGas, printFullMemory, useDBGPrintHint} = e.data;
-            result = runCairoProgram(data, availableGas, printFullMemory, useDBGPrintHint);
+            result = runCairoProgram(data, availableGas, true, printFullMemory, false, useDBGPrintHint);
             break;
         case "compileCairoProgram":
             result = compileCairoProgram(data, replaceIds);
             break;
         case "compileStarknetContract":
             result = compileStarknetContract(data, true, replaceIds);
+            break;
+        case "runTest":
+            result = runTests(data, true, false, true, true, false, false, true, true);
             break;
         default:
             console.error(`Unexpected function: ${functionToRun}`);
