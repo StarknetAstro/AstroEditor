@@ -411,7 +411,7 @@ export default function Home() {
                       <h2 className={'text-xl font-bold mt-4'}>About WASM-Cairo Project</h2>
                       <p>A suite of development tools and an environment for Cairo 1, all based on WebAssembly.</p>
                       <h2 className={'text-xl font-bold mt-4'}>About Me</h2>
-                      <p>I'm <a href="https://twitter.com/cryptonerdcn">cryptonedcn</a>, from <a
+                      <p>I&apos;m <a href="https://twitter.com/cryptonerdcn">cryptonedcn</a>, from <a
                           href="https://twitter.com/starknetastrocn">Starknet Astro</a>.</p>
                       <h2 className={'text-xl font-bold mt-4'}>About Starknet Astro</h2>
                       <p>Starknet Astro, established in January 2023, is the most creative and hardcore
