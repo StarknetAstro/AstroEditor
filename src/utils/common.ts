@@ -13,3 +13,8 @@ export const checkIsContract = (codeString: string) => {
     // Check if #[contract] is in the code part
     return noCommentsCodeStr.includes('#[contract]');
 }
+
+export const shortenAddress = (address?:string) =>{
+    if(!address) return null
+    return `${address?.substring(0,6)}...${address?.substring(address.length -4, address.length)}`
+}
