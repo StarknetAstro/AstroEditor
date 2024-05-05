@@ -1,6 +1,6 @@
 import {ReactNode} from "react";
 import {Loader2} from "lucide-react";
-import {cn} from "@/lib/utils.ts";
+import {cn} from "@/lib/utils";
 
 export const Loading = ({ children, loading, className }: { children: ReactNode; loading: boolean; className?: string }) => {
     return (

@@ -12,7 +12,7 @@ import {
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import {ReactNode} from "react";
 import {ButtonProps} from "@/components/ui/button";
-import {cn} from "@/lib/utils.ts";
+import {cn} from "@/lib/utils";
 
 export interface ModalProps {
     /**
