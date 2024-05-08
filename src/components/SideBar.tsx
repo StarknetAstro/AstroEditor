@@ -1,6 +1,7 @@
 import {Button} from "@/components/ui/button";
-import {Codesandbox, Cog, Info} from "lucide-react";
+import {Cog, Files, Info} from "lucide-react";
 import {usePathname, useRouter} from "next/navigation";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 enum PageEnum {
     EDITOR = "editor",
@@ -17,18 +18,18 @@ enum TabEnum {
 const pages = [
     {
         value: PageEnum.EDITOR,
-        label: 'Editor',
-        icon: <Codesandbox className="mr-2 h-4 w-4"/>
+        label: 'Files',
+        icon: <Files size={24}/>
     },
     {
         value: PageEnum.SETTING,
         label: 'Setting',
-        icon: <Cog className="mr-2 h-4 w-4"/>
+        icon: <Cog size={24}/>
     },
     {
         value: PageEnum.ABOUT,
         label: 'About',
-        icon: <Info className="mr-2 h-4 w-4"/>
+        icon: <Info size={24}/>
     }
 ]
 
@@ -41,14 +42,22 @@ export const SideBar = () => {
         <div className={"pb-12 hidden md:block"}>
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
-                    <div className="space-y-1">
+                    <div className="flex flex-col gap-4">
                         {
                             pages.map((item, index) => {
                                 return (
-                                    <Button key={index} variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-full justify-start" onClick={() => router.push(item.value)}>
-                                        {item.icon}
-                                        {item.label}
-                                    </Button>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button size="icon" key={index} variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => router.push(item.value)}>
+                                                    {item.icon}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>{item.label}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 )
                             })
                         }

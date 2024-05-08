@@ -3,48 +3,32 @@ import {Tabs} from "@/components/Tabs";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {PlusCircleIcon} from "lucide-react";
-import {useEffect, useRef, useState} from "react";
-import {checkIsContract} from "@/utils/common";
+import {useEffect, useState} from "react";
+import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
 import {useSettingStore} from "@/stores/setting";
 import {useAccount} from "@starknet-react/core";
-
-enum TabEnum {
-    COMPILETAB = 'COMPILETAB',
-    RUNTAB = "RUNTAB",
-    TESTTAB = "TESTTAB"
-}
+import {useCairoWasm} from "@/hooks/useCairoWasm";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 export default function Editor() {
     const [textValues, setTextValues] = useState<string[]>([]);
     const [active, setActive] = useState(0);
     const { isReplaceIds,  availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
     const [compileResult, setCompileResult] = useState<string>("");
-    const [runResult, setRunResult] = useState<string>("");
-    const [testResult, setTestResult] = useState<string>("");
     const [tabs, setTabs] = useState([
         {
             value: 0,
             label: 'Default',
         }
     ]);
-    const [compileLoading, setCompileLoading] = useState(false);
-    const [runLoading, setRunLoading] = useState(false);
-    const [testLoading, setTestLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState(TabEnum.COMPILETAB);
+    const [logs, setLogs] = useState<{
+        timestamp: number,
+        message: string
+    }[]>([]);
     const { account } = useAccount();
+    const { compileCairo, compileContract, compileLoading, runCairo, runLoading, testLoading, runTests} = useCairoWasm();
 
     console.log(account, 'acc')
-
-    const workerRef = useRef<Worker>();
-
-    useEffect(() => {
-        workerRef.current = new Worker(new URL('../../../../worker.js', import.meta.url));
-        // workerRef.current.onmessage = (event: MessageEvent<number>) =>
-        //     alert(`WebWorker Response => ${event.data}`);
-        return () => {
-            workerRef.current?.terminate();
-        };
-    }, []);
 
 
     useEffect(() => {
@@ -59,73 +43,78 @@ export default function Editor() {
             });
     }, []);
 
-    const handleCompile = () => {
+    const handleCompile = async () => {
         //get textarea cairo_program's value
         const cairo_program = textValues[active];
         console.log(textValues, active, cairo_program);
-        if (cairo_program == "" || cairo_program == null || cairo_program == undefined) {
+        if (!cairo_program) {
             return;
         }
-        setCompileLoading(true);
         if (checkIsContract(cairo_program)) {
-            workerRef.current?.postMessage({
-                data: cairo_program,
-                replaceIds: isReplaceIds,
-                functionToRun: "compileStarknetContract"
-            });
+            const res = await compileContract({starknetContract: cairo_program, replaceIds: isReplaceIds, allowWarnings: true});
+            console.log(res, 'res');
+            setCompileResult(res as string);
+            setLogs([
+                ...logs,
+                {
+                    timestamp: Date.now(),
+                    message: res as string,
+                }
+            ])
         } else {
-            workerRef.current?.postMessage({
-                data: cairo_program,
-                replaceIds: isReplaceIds,
-                functionToRun: "compileCairoProgram"
-            });
+            const res = await compileCairo({cairoProgram: cairo_program, replaceIds: isReplaceIds});
+            console.log(res, 'res');
+            setCompileResult(res as string);
+            setLogs([
+                    ...logs,
+                {
+                    timestamp: Date.now(),
+                    message: res as string,
+                }
+            ])
         }
-
-        workerRef.current!.onmessage = function (e) {
-            console.log(e, 'msg');
-            setCompileResult(e.data);
-            setCompileLoading(false);
-            setActiveTab(TabEnum.COMPILETAB);
-        };
     }
 
-    const handleRun = () => {
+    const handleRun = async () => {
         //get textarea cairo_program's value
         const cairo_program = textValues[active];
-        if (cairo_program == "" || cairo_program == null || cairo_program == undefined) {
+        if (!cairo_program) {
             return;
         }
-        setRunLoading(true);
         const gasValue = availableGas;
-        workerRef.current?.postMessage({
-            data: cairo_program,
+        const res = await runCairo({
+            cairoProgram: cairo_program,
+            replaceIds: isReplaceIds,
             availableGas: gasValue == "" ? undefined : parseInt(gasValue),
             printFullMemory: printFullMemory,
             useDBGPrintHint: useCairoDebugPrint,
-            functionToRun: "runCairoProgram"
         });
-        workerRef.current!.onmessage = function(e) {
-            setRunResult(e.data);
-            setRunLoading(false);
-            setActiveTab(TabEnum.RUNTAB);
-        };
+        console.log(res, 'res');
+        setLogs([
+            ...logs,
+            {
+                timestamp: Date.now(),
+                message: res as string,
+            }
+        ]);
     }
 
-    const handleRunTest = () => {
+    const handleRunTest = async () => {
         const cairo_program = textValues[active];
-        if (cairo_program == "" || cairo_program == null || cairo_program == undefined) {
+        if (!cairo_program) {
             return;
         }
-        setTestLoading(true);
-        workerRef.current?.postMessage({
-            data: cairo_program,
-            functionToRun: "runTest"
+        const res = await runTests({
+            cairoProgram: cairo_program,
         });
-        workerRef.current!.onmessage = function(e) {
-            setTestResult(e.data);
-            setTestLoading(false);
-            setActiveTab(TabEnum.TESTTAB);
-        };
+        console.log(res, 'res');
+        setLogs([
+            ...logs,
+            {
+                timestamp: Date.now(),
+                message: res as string,
+            }
+        ]);
     }
 
     const addTab = () => {
@@ -220,10 +209,6 @@ export default function Editor() {
                       </div>}
                 />
             </div>
-            {/*<div className="tab-bar">*/}
-            {/*    <button className="tab-item active">Default</button>*/}
-            {/*    <button id="new-tab">+</button>*/}
-            {/*</div>*/}
             <div className="toolbar flex justify-between gap-4 my-5">
                 <div className="flex gap-4">
                     <Button onClick={handleCompile} loading={compileLoading}>Compile</Button>
@@ -240,38 +225,33 @@ export default function Editor() {
                             onClick={() => saveFile('astro.cairo', textValues[active])}>Save source code</Button>
                 </div>
             </div>
-            <div className="pt-2 flex-1">
-                <Tabs value={activeTab} onValueChange={v => setActiveTab(v as TabEnum)} items={[
-                    {
-                        value: TabEnum.COMPILETAB,
-                        label: 'Compile Result',
-                        content: <div id="CompileResult" className="tabcontent">
-                            <Textarea value={compileResult} readOnly id="sierra_program"
-                                      className="h-[20vh]"></Textarea>
+            <div className="mt-4 flex-1">
+                <div className="flex justify-between items-center py-2">
+                    <div className={'border-b border-primary'}>
+                        Output
+                    </div>
+                    <Button variant={'outline'} className="ml-auto mr-2"
+                            onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>Save
+                        compiled
+                        file
+                    </Button>
+                </div>
+                <div>
+                    <ScrollArea className="h-[20vh]">
+                        <div className="space-y-4">
+                            {
+                                logs.map((log, index) => {
+                                    return (
+                                        <div key={index}>
+                                            <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]</div>
+                                            <div className="text-sm">{log.message}</div>
+                                        </div>
+                                    )
+                                })
+                            }
                         </div>
-                    },
-                    {
-                        value: TabEnum.RUNTAB,
-                        label: 'Output',
-                        content: <div id="RunResult" className="tabcontent">
-                            <Textarea readOnly id="run_result" className="h-[20vh]" value={runResult}>No
-                                output.</Textarea>
-                        </div>
-                    },
-                    {
-                        value: TabEnum.TESTTAB,
-                        label: 'Test Result',
-                        content: <div className="tabcontent">
-                            <Textarea readOnly className="h-[20vh]" value={testResult}>No output.</Textarea>
-                        </div>
-                    }
-                ]}
-                      extra={<Button variant={'outline'} className="ml-auto mr-2"
-                                     onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>Save
-                          compiled
-                          file
-                      </Button>}
-                />
+                    </ScrollArea>
+                </div>
             </div>
         </div>
     )
