@@ -1,24 +1,23 @@
 'use client';
-import {Tabs} from "@/components/Tabs";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
-import {PlusCircleIcon} from "lucide-react";
+import {Eraser, FilePlus, Save} from "lucide-react";
 import {useEffect, useState} from "react";
 import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
 import {useSettingStore} from "@/stores/setting";
 import {useAccount} from "@starknet-react/core";
 import {useCairoWasm} from "@/hooks/useCairoWasm";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {cn} from "@/lib/utils";
 
 export default function Editor() {
-    const [textValues, setTextValues] = useState<string[]>([]);
     const [active, setActive] = useState(0);
     const { isReplaceIds,  availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
     const [compileResult, setCompileResult] = useState<string>("");
-    const [tabs, setTabs] = useState([
+    const [files, setFiles] = useState([
         {
-            value: 0,
-            label: 'Default',
+            content: '',
+            name: 'hello.cairo',
         }
     ]);
     const [logs, setLogs] = useState<{
@@ -36,7 +35,10 @@ export default function Editor() {
             .then(response => response.text())
             .then(data => {
                 console.log(data);
-                setTextValues([data]);
+                setFiles([{
+                    content: data,
+                    name: 'hello.cairo',
+                }]);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -45,8 +47,8 @@ export default function Editor() {
 
     const handleCompile = async () => {
         //get textarea cairo_program's value
-        const cairo_program = textValues[active];
-        console.log(textValues, active, cairo_program);
+        const cairo_program = files[active].content;
+        console.log(cairo_program);
         if (!cairo_program) {
             return;
         }
@@ -77,7 +79,7 @@ export default function Editor() {
 
     const handleRun = async () => {
         //get textarea cairo_program's value
-        const cairo_program = textValues[active];
+        const cairo_program = files[active].content;
         if (!cairo_program) {
             return;
         }
@@ -100,7 +102,7 @@ export default function Editor() {
     }
 
     const handleRunTest = async () => {
-        const cairo_program = textValues[active];
+        const cairo_program = files[active].content;
         if (!cairo_program) {
             return;
         }
@@ -118,19 +120,21 @@ export default function Editor() {
     }
 
     const addTab = () => {
-        setTabs([
-            ...tabs,
+        setFiles([
+            ...files,
             {
-                value: tabs.length,
-                label: 'New File',
+                content: '',
+                name: 'new.cairo',
             }
         ]);
-        setTextValues([...textValues, ''])
     }
 
-    const setTextValueByIndex = (index: number, value: string) => {
-        setTextValues(textValues?.map((item, i) => {
-            return i === index ? value : item;
+    const updateFileByIndex = (index: number, value: string) => {
+        setFiles(files?.map((item, i) => {
+            return {
+                ...item,
+                content: i === index ? value : item.content,
+            };
         }))
     }
 
@@ -139,14 +143,14 @@ export default function Editor() {
         if (file) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                setTextValueByIndex(active, e.target?.result as string);
+                updateFileByIndex(active, e.target?.result as string);
             }
             reader.readAsText(file);
         }
     }
 
     const saveFile = async (fileName: string, content: string, isComplied?: boolean) => {
-        if(content == "") {
+        if(!content) {
             return;
         }
 
@@ -186,30 +190,31 @@ export default function Editor() {
         alert("File has been saved.");
     }
     return (
-        <div id="Code" className="h-full flex flex-col">
-            <div className="">
-                <Tabs value={String(active)} onValueChange={(v) => setActive(Number(v))}
-                      items={tabs.map((tab, index) => {
-                          return {
-                              value: String(tab.value),
-                              label: tab.label,
-                              content: <div className="tabs-content">
-                                  {/*Tab content will be added here dynamically*/}
-                                  <Textarea id="cairo_program" value={textValues[index]}
-                                            onChange={e => setTextValueByIndex(index, e.target.value)}
-                                            className="codeEditor active h-[40vh]"></Textarea>
-                              </div>
-                          }
-                      })}
-                      extra={<div className="ml-auto mr-4">
-                          <Button onClick={addTab}>
-                              <PlusCircleIcon className="mr-2 h-4 w-4"/>
-                              Add
-                          </Button>
-                      </div>}
-                />
+        <div className="h-full flex flex-col">
+            <div className="w-full">
+                <div className="flex items-center border-b">
+                    {
+                        files?.map((file, i) => {
+                            return (
+                                <div key={i} onClick={() => setActive(i)} className={cn('border-l border-r px-4 py-2 cursor-pointer', active === i ? 'border-t-2 border-t-primary' : '')}>
+                                    {file.name}
+                                </div>
+                            )
+                        })
+                    }
+                    <div className="ml-auto mr-4">
+                        <Button onClick={addTab} variant={'outline'} size={'icon'} className={'h-8 w-8'}>
+                            <FilePlus size={16}/>
+                        </Button>
+                    </div>
+                </div>
+                <div>
+                    <Textarea id="cairo_program" value={files[active].content}
+                              onChange={e => updateFileByIndex(active, e.target.value)}
+                              className="border-none h-[40vh]"></Textarea>
+                </div>
             </div>
-            <div className="toolbar flex justify-between gap-4 my-5">
+            <div className="toolbar flex justify-between gap-4 my-4 px-4">
                 <div className="flex gap-4">
                     <Button onClick={handleCompile} loading={compileLoading}>Compile</Button>
                     <Button onClick={handleRun} loading={runLoading}>Run Cairo</Button>
@@ -222,22 +227,27 @@ export default function Editor() {
                                className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
                     </div>
                     <Button variant={'outline'} className="file-button"
-                            onClick={() => saveFile('astro.cairo', textValues[active])}>Save source code</Button>
+                            onClick={() => saveFile('astro.cairo', files[active].content)}>Save source code</Button>
                 </div>
             </div>
             <div className="mt-4 flex-1">
-                <div className="flex justify-between items-center py-2">
+                <div className="flex justify-between items-center py-2 px-4 border-t">
                     <div className={'border-b border-primary'}>
                         Output
                     </div>
-                    <Button variant={'outline'} className="ml-auto mr-2"
-                            onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>Save
-                        compiled
-                        file
-                    </Button>
+                    <div className="flex gap-2">
+                        <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
+                            <Save size={16}/>
+                        </Button>
+                        <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                onClick={() => setLogs([])}>
+                            <Eraser size={16}/>
+                        </Button>
+                    </div>
                 </div>
                 <div>
-                    <ScrollArea className="h-[20vh]">
+                    <ScrollArea className="h-[35vh]">
                         <div className="space-y-4">
                             {
                                 logs.map((log, index) => {

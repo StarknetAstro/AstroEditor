@@ -2,7 +2,7 @@
 
 export default function About() {
     return (
-        <div id="About" className="page-content">
+        <div className="px-4 pt-6 lg:px-8">
             <h2 className={'text-xl font-bold'}>About Astro Editor</h2>
             <p>A cutting-edge, online Integrated Development Environment (IDE) built on top of WASM-Cairo.
                 All-JavaScript-or-WASM environment, free of dependencies on backend servers and local

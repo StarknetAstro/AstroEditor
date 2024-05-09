@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Cog, Files, Info} from "lucide-react";
 import {usePathname, useRouter} from "next/navigation";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import logo from "@/assets/logo.png";
 
 enum PageEnum {
     EDITOR = "editor",
@@ -39,7 +40,12 @@ export const SideBar = () => {
     const pathname = usePathname();
     console.log(pathname)
     return (
-        <div className={"pb-12 hidden md:block"}>
+        <div className={"pb-12 hidden md:block border-r h-[100vh]"}>
+            <div className={'text-center py-4 flex justify-center'}>
+                <a href="https://github.com/StarknetAstro/AstroEditor" target={'_blank'}>
+                    <img src={logo.src} className={'w-10 rounded-lg'} alt=""/>
+                </a>
+            </div>
             <div className="space-y-4 py-4">
                 <div className="px-3 py-2">
                     <div className="flex flex-col gap-4">

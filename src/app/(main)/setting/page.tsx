@@ -21,7 +21,7 @@ export default function Setting() {
     const setIsReplaceIds = (v: boolean) => setData({ isReplaceIds: v });
 
     return (
-        <div id="Settings" className="page-content space-y-4">
+        <div id="Settings" className="space-y-4 px-4 pt-6 lg:px-8">
             <SectionCard title="Cairo Compiler settings" className={'space-y-4'}>
                 <div className="space-y-4">
                     <div className="flex items-center space-x-2">

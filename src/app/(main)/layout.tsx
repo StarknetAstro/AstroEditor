@@ -14,11 +14,10 @@ export default function Home({children}: {children: ReactNode}) {
     return (
         <StarknetProvider>
             <QueryClientProvider client={queryClient}>
-                <div className={'p-0 h-[100vh] flex flex-col'}>
-                    <Header/>
+                <div className={'p-0 h-[100vh]'}>
                     <div className="editor flex flex-1">
                         <SideBar/>
-                        <div className="main flex-1 lg:border-l px-4 pt-6 lg:px-8">
+                        <div className="main flex-1">
                             {children}
                         </div>
                     </div>
