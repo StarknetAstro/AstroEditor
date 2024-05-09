@@ -1,7 +1,7 @@
 import {Button} from "@/components/ui/button";
 import {Cog, Files, Info} from "lucide-react";
 import {usePathname, useRouter} from "next/navigation";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {Tooltip} from "@/components/Tooltip";
 import logo from "@/assets/logo.png";
 
 enum PageEnum {
@@ -52,18 +52,11 @@ export const SideBar = () => {
                         {
                             pages.map((item, index) => {
                                 return (
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button size="icon" key={index} variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => router.push(item.value)}>
-                                                    {item.icon}
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>{item.label}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <Tooltip content={<p>{item.label}</p>}>
+                                        <Button size="icon" key={index} variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => router.push(item.value)}>
+                                            {item.icon}
+                                        </Button>
+                                    </Tooltip>
                                 )
                             })
                         }

@@ -1,7 +1,7 @@
 'use client';
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
-import {Eraser, FilePlus, Save} from "lucide-react";
+import {Eraser, FileDown, FilePlus, FlaskConical, FolderOpen, Hammer, Play, Save, X} from "lucide-react";
 import {useEffect, useState} from "react";
 import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
 import {useSettingStore} from "@/stores/setting";
@@ -9,8 +9,10 @@ import {useAccount} from "@starknet-react/core";
 import {useCairoWasm} from "@/hooks/useCairoWasm";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {cn} from "@/lib/utils";
+import {Editor} from "@monaco-editor/react";
+import {Tooltip} from "@/components/Tooltip";
 
-export default function Editor() {
+export default function EditorPage() {
     const [active, setActive] = useState(0);
     const { isReplaceIds,  availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
     const [compileResult, setCompileResult] = useState<string>("");
@@ -138,6 +140,13 @@ export default function Editor() {
         }))
     }
 
+    const removeFile = (index: number) => {
+        setFiles(files?.filter((item, i) => i !== index));
+        if(index===active) {
+            setActive(index-1);
+        }
+    }
+
     const handleOpenFile = (e: any) => {
         var file = e.target.files[0];
         if (file) {
@@ -196,8 +205,10 @@ export default function Editor() {
                     {
                         files?.map((file, i) => {
                             return (
-                                <div key={i} onClick={() => setActive(i)} className={cn('border-l border-r px-4 py-2 cursor-pointer', active === i ? 'border-t-2 border-t-primary' : '')}>
+                                <div key={i} onClick={() => setActive(i)}
+                                     className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
                                     {file.name}
+                                    {i !== 0 && <X size={16} onClick={() => removeFile(i)}/>}
                                 </div>
                             )
                         })
@@ -209,25 +220,46 @@ export default function Editor() {
                     </div>
                 </div>
                 <div>
-                    <Textarea id="cairo_program" value={files[active].content}
-                              onChange={e => updateFileByIndex(active, e.target.value)}
-                              className="border-none h-[40vh]"></Textarea>
+                    <Editor
+                        theme={'vs-dark'}
+                        height="40vh"
+                        defaultLanguage="rust"
+                        value={files[active].content}
+                        onChange={(v) => updateFileByIndex(active, v || '')}
+                    />
                 </div>
             </div>
             <div className="toolbar flex justify-between gap-4 my-4 px-4">
                 <div className="flex gap-4">
-                    <Button onClick={handleCompile} loading={compileLoading}>Compile</Button>
-                    <Button onClick={handleRun} loading={runLoading}>Run Cairo</Button>
-                    <Button onClick={handleRunTest} loading={testLoading}>Run Test</Button>
+                    <Button onClick={handleCompile} loading={compileLoading} className={'gap-1'}>
+                        <Hammer size={16}/>
+                        Compile
+                    </Button>
+                    <Button onClick={handleRun} loading={runLoading} className={'gap-1'}>
+                        <Play size={16}/>
+                        Run Cairo
+                    </Button>
+                    <Button onClick={handleRunTest} loading={testLoading} className={'gap-1'}>
+                        <FlaskConical size={16}/>
+                        Run Test
+                    </Button>
                 </div>
                 <div className="md:flex gap-4 hidden">
-                    <div className={'relative'}>
-                        <Button id="open-file-button" variant={'outline'}>Open File</Button>
-                        <input type="file" onChange={handleOpenFile}
-                               className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
-                    </div>
-                    <Button variant={'outline'} className="file-button"
-                            onClick={() => saveFile('astro.cairo', files[active].content)}>Save source code</Button>
+                    <Tooltip content={'Open file'}>
+                        <div className={'relative'}>
+                            <Button className="w-8 h-8" variant={'outline'} size={'icon'}>
+                            <FolderOpen size={16}/>
+                            </Button>
+                            <input type="file" onChange={handleOpenFile}
+                                   className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
+                        </div>
+                    </Tooltip>
+                    <Tooltip content={'Save source code'}>
+                        <Button variant={'outline'} className="w-8 h-8" size={'icon'}
+                                onClick={() => saveFile('astro.cairo', files[active].content)}>
+                            <FileDown size={16}/>
+                        </Button>
+                    </Tooltip>
                 </div>
             </div>
             <div className="mt-4 flex-1">
@@ -236,19 +268,23 @@ export default function Editor() {
                         Output
                     </div>
                     <div className="flex gap-2">
-                        <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
-                            <Save size={16}/>
-                        </Button>
-                        <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                onClick={() => setLogs([])}>
-                            <Eraser size={16}/>
-                        </Button>
+                        <Tooltip content={'Save compile result'}>
+                            <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                    onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
+                                <Save size={16}/>
+                            </Button>
+                        </Tooltip>
+                        <Tooltip content={'Clear'}>
+                            <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                    onClick={() => setLogs([])}>
+                                <Eraser size={16}/>
+                            </Button>
+                        </Tooltip>
                     </div>
                 </div>
                 <div>
                     <ScrollArea className="h-[35vh]">
-                        <div className="space-y-4">
+                        <div className="space-y-4 px-4">
                             {
                                 logs.map((log, index) => {
                                     return (
