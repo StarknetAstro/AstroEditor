@@ -52,8 +52,8 @@ export const SideBar = () => {
                         {
                             pages.map((item, index) => {
                                 return (
-                                    <Tooltip content={<p>{item.label}</p>}>
-                                        <Button size="icon" key={index} variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => router.push(item.value)}>
+                                    <Tooltip content={<p>{item.label}</p>} key={index}>
+                                        <Button size="icon" variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => router.push(item.value)}>
                                             {item.icon}
                                         </Button>
                                     </Tooltip>

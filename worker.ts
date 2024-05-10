@@ -16,13 +16,14 @@ interface ITestOptions {
 class CairoWorker {
     init = async () => {
         await wasmCairo();
+        greet('Hello World');
     }
     constructor() {
         this.init();
     }
 
     async runCairoProgram({cairoProgram, availableGas, printFullMemory, useDBGPrintHint, allWarnings = true, runProfiler = false}: any) {
-        const res = runCairoProgram(cairoProgram, availableGas, true, printFullMemory, false, useDBGPrintHint);
+        const res = runCairoProgram(cairoProgram, availableGas, allWarnings, printFullMemory, runProfiler, useDBGPrintHint);
         return res;
     }
 
