@@ -277,8 +277,8 @@ export default function EditorPage() {
             </div>
             <div className="mt-4 flex-1">
                 <div className="flex justify-between items-center py-2 px-4 border-t">
-                    <div className={'border-b border-primary'}>
-                        Output
+                    <div className={'border-b border-primary text-sm'}>
+                        output
                     </div>
                     <div className="flex gap-2">
                         <Tooltip content={'Save compile result'}>
