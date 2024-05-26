@@ -54,6 +54,7 @@ export default function EditorPage() {
         if (!cairo_program) {
             return;
         }
+        console.log(checkIsContract(cairo_program))
         if (checkIsContract(cairo_program)) {
             const res = await compileContract({starknetContract: cairo_program, replaceIds: isReplaceIds, allowWarnings: true});
             console.log(res, 'res');
@@ -303,7 +304,7 @@ export default function EditorPage() {
                                     return (
                                         <div key={index}>
                                             <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]</div>
-                                            <div className="text-sm">{log.message}</div>
+                                            <div className="text-sm" dangerouslySetInnerHTML={{__html: log.message}}></div>
                                         </div>
                                     )
                                 })

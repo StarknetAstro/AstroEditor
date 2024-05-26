@@ -1,7 +1,6 @@
 
 'use client';
 import {ReactNode} from "react";
-import {Header} from "@/components/Header";
 import {SideBar} from "@/components/SideBar";
 import {StarknetProvider} from "@/components/StarkProvider";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
