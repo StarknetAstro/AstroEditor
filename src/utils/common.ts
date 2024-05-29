@@ -11,5 +11,5 @@ export const checkIsContract = (codeString: string) => {
     const noCommentsCodeStr = noCommentsCode.join('');
 
     // Check if #[contract] is in the code part
-    return noCommentsCodeStr.includes('#[contract]');
+    return noCommentsCodeStr.includes('#[starknet::contract]');
 }
