@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const checkIsContract = (codeString: string) => {
     // Remove single-line comments
     let lines = codeString.split('\n');
@@ -11,5 +13,14 @@ export const checkIsContract = (codeString: string) => {
     const noCommentsCodeStr = noCommentsCode.join('');
 
     // Check if #[contract] is in the code part
-    return noCommentsCodeStr.includes('#[contract]');
+    return noCommentsCodeStr.includes('#[starknet::contract]');
+}
+
+export const shortenAddress = (address?:string) =>{
+    if(!address) return null
+    return `${address?.substring(0,6)}...${address?.substring(address.length -4, address.length)}`
+}
+
+export const displayTimeByTimeStamp = (time: number) => {
+    return dayjs(new Date(time)).format('YYYY-MM-DD HH:mm:ss');
 }
