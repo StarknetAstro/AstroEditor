@@ -357,7 +357,7 @@ export default function Home() {
                             <Select disabled value={cairoVersion} onChange={setCairoVersion} className={'w-20'} options={[
                               {
                                 value: '2.0',
-                                label: '2.3.1'
+                                label: '2.6.3'
                               },
                               {
                                 value: '1.10',
