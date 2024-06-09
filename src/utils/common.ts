@@ -24,3 +24,10 @@ export const shortenAddress = (address?:string) =>{
 export const displayTimeByTimeStamp = (time: number) => {
     return dayjs(new Date(time)).format('YYYY-MM-DD HH:mm:ss');
 }
+
+export const createQueryString = (search: any, name: string, value: string) => {
+    const params = new URLSearchParams(search.toString());
+    params.set(name, value);
+
+    return params.toString();
+};

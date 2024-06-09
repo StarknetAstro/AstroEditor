@@ -1,7 +1,7 @@
 'use client';
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
-import {Eraser, FileDown, FilePlus, FlaskConical, FolderOpen, Hammer, Play, Save, X} from "lucide-react";
+import {BugPlay, Eraser, FileDown, FilePlus, FlaskConical, FolderOpen, Hammer, Play, Save, X} from "lucide-react";
 import {useEffect, useState} from "react";
 import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
 import {useSettingStore} from "@/stores/setting";
@@ -11,6 +11,9 @@ import {ScrollArea} from "@/components/ui/scroll-area";
 import {cn} from "@/lib/utils";
 import {Editor} from "@monaco-editor/react";
 import {Tooltip} from "@/components/Tooltip";
+import {ActionPanel} from "@/app/(main)/components/ActionPanel";
+import {useContractStore} from "@/stores/contracts";
+import {genContractData} from "@/utils/starknet";
 
 export default function EditorPage() {
     const [active, setActive] = useState(0);
@@ -30,6 +33,8 @@ export default function EditorPage() {
     const { compileCairo, compileContract, compileLoading, runCairo, runLoading, testLoading, runTests} = useCairoWasm();
 
     console.log(account, active, files, 'acc')
+
+    const { contracts, setData: setContracts } = useContractStore();
 
 
     useEffect(() => {
@@ -65,7 +70,11 @@ export default function EditorPage() {
                     timestamp: Date.now(),
                     message: res as string,
                 }
-            ])
+            ]);
+            const contractData = await genContractData(files[active].name, res as string);
+            console.log(contractData, 'dd');
+
+            setContracts({[files[active].name]: contractData})
         } else {
             const res = await compileCairo({cairoProgram: cairo_program, replaceIds: isReplaceIds});
             console.log(res, 'res');
@@ -205,112 +214,116 @@ export default function EditorPage() {
         alert("File has been saved.");
     }
     return (
-        <div className="h-full flex flex-col">
-            <div className="w-full">
-                <div className="flex items-center border-b">
-                    {
-                        files?.map((file, i) => {
-                            return (
-                                <div key={i} onClick={() => {
-                                    setActive(i);
-                                }}
-                                     className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
-                                    {file.name}
-                                    {i !== 0 && <X size={16} onClick={(e) => {
-                                        removeFile(i);
-                                        e.stopPropagation();
-                                    }}/>}
-                                </div>
-                            )
-                        })
-                    }
-                    <div className="ml-auto mr-4">
-                        <Button onClick={addTab} variant={'outline'} size={'icon'} className={'h-8 w-8'}>
-                            <FilePlus size={16}/>
-                        </Button>
+        <div className={'flex'}>
+            <ActionPanel/>
+            <div className="h-full flex flex-col flex-1 border-l">
+                <div className="w-full">
+                    <div className="flex items-center border-b">
+                        {
+                            files?.map((file, i) => {
+                                return (
+                                    <div key={i} onClick={() => {
+                                        setActive(i);
+                                    }}
+                                         className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
+                                        {file.name}
+                                        {i !== 0 && <X size={16} onClick={(e) => {
+                                            removeFile(i);
+                                            e.stopPropagation();
+                                        }}/>}
+                                    </div>
+                                )
+                            })
+                        }
+                        <div className="ml-auto mr-4">
+                            <Button onClick={addTab} variant={'outline'} size={'icon'} className={'h-8 w-8'}>
+                                <FilePlus size={16}/>
+                            </Button>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    {
-                        files[active] ? <Editor
-                            theme={'vs-dark'}
-                            height="40vh"
-                            defaultLanguage="rust"
-                            value={files[active].content}
-                            onChange={(v) => updateFileByIndex(active, v || '')}
-                        /> : null
-                    }
+                    <div>
+                        {
+                            files[active] ? <Editor
+                                theme={'vs-dark'}
+                                height="40vh"
+                                defaultLanguage="rust"
+                                value={files[active].content}
+                                onChange={(v) => updateFileByIndex(active, v || '')}
+                            /> : null
+                        }
 
+                    </div>
                 </div>
-            </div>
-            <div className="toolbar flex justify-between gap-4 my-4 px-4">
-                <div className="flex gap-4">
-                    <Button onClick={handleCompile} loading={compileLoading} className={'gap-1'}>
-                        <Hammer size={16}/>
-                        Compile
-                    </Button>
-                    <Button onClick={handleRun} loading={runLoading} className={'gap-1'}>
-                        <Play size={16}/>
-                        Run Cairo
-                    </Button>
-                    <Button onClick={handleRunTest} loading={testLoading} className={'gap-1'}>
-                        <FlaskConical size={16}/>
-                        Run Test
-                    </Button>
-                </div>
-                <div className="md:flex gap-4 hidden">
-                    <Tooltip content={'Open file'}>
-                        <div className={'relative'}>
-                            <Button className="w-8 h-8" variant={'outline'} size={'icon'}>
-                            <FolderOpen size={16}/>
-                            </Button>
-                            <input type="file" onChange={handleOpenFile}
-                                   className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
-                        </div>
-                    </Tooltip>
-                    <Tooltip content={'Save source code'}>
-                        <Button variant={'outline'} className="w-8 h-8" size={'icon'}
-                                onClick={() => saveFile('astro.cairo', files[active].content)}>
-                            <FileDown size={16}/>
+                <div className="toolbar flex justify-between gap-4 my-4 px-4">
+                    <div className="flex gap-4">
+                        <Button onClick={handleCompile} loading={compileLoading} className={'gap-1'}>
+                            <Hammer size={16}/>
+                            Compile
                         </Button>
-                    </Tooltip>
-                </div>
-            </div>
-            <div className="mt-4 flex-1">
-                <div className="flex justify-between items-center py-2 px-4 border-t">
-                    <div className={'border-b border-primary text-sm'}>
-                        output
+                        <Button onClick={handleRun} loading={runLoading} className={'gap-1'}>
+                            <Play size={16}/>
+                            Run Cairo
+                        </Button>
+                        <Button onClick={handleRunTest} loading={testLoading} className={'gap-1'}>
+                            <BugPlay size={16}/>
+                            Run Test
+                        </Button>
                     </div>
-                    <div className="flex gap-2">
-                        <Tooltip content={'Save compile result'}>
-                            <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                    onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
-                                <Save size={16}/>
+                    <div className="md:flex gap-4 hidden">
+                        <Tooltip content={'Open file'}>
+                            <div className={'relative'}>
+                                <Button className="w-8 h-8" variant={'outline'} size={'icon'}>
+                                    <FolderOpen size={16}/>
+                                </Button>
+                                <input type="file" onChange={handleOpenFile}
+                                       className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
+                            </div>
+                        </Tooltip>
+                        <Tooltip content={'Save source code'}>
+                            <Button variant={'outline'} className="w-8 h-8" size={'icon'}
+                                    onClick={() => saveFile('astro.cairo', files[active].content)}>
+                                <FileDown size={16}/>
                             </Button>
                         </Tooltip>
-                        <Tooltip content={'Clear'}>
-                            <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                    onClick={() => setLogs([])}>
-                                <Eraser size={16}/>
-                            </Button>
-                        </Tooltip>
                     </div>
                 </div>
-                <div>
-                    <ScrollArea className="h-[35vh]">
-                        <div className="space-y-4 px-4">
-                            {
-                                logs.map((log, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]</div>
-                                            <div className="text-sm" dangerouslySetInnerHTML={{__html: log.message}}></div>
-                                        </div>
-                                    )
-                                })
-                            }
+                <div className="mt-4 flex-1">
+                    <div className="flex justify-between items-center py-2 px-4 border-t">
+                        <div className={'border-b border-primary text-sm'}>
+                            output
                         </div>
-                    </ScrollArea>
+                        <div className="flex gap-2">
+                            <Tooltip content={'Save compile result'}>
+                                <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                        onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
+                                    <Save size={16}/>
+                                </Button>
+                            </Tooltip>
+                            <Tooltip content={'Clear'}>
+                                <Button variant={'outline'} size={'icon'} className="w-8 h-8"
+                                        onClick={() => setLogs([])}>
+                                    <Eraser size={16}/>
+                                </Button>
+                            </Tooltip>
+                        </div>
+                    </div>
+                    <div>
+                        <ScrollArea className="h-[35vh]">
+                            <div className="space-y-4 px-4">
+                                {
+                                    logs.map((log, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]</div>
+                                                <div className="text-sm"
+                                                     dangerouslySetInnerHTML={{__html: log.message}}></div>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </ScrollArea>
+                    </div>
                 </div>
             </div>
         </div>

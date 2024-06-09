@@ -14,6 +14,9 @@ importers:
       '@monaco-editor/react':
         specifier: ^4.6.0
         version: 4.6.0(monaco-editor@0.48.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@openpanel/nextjs':
+        specifier: 0.0.9-beta
+        version: 0.0.9-beta(next@14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@radix-ui/react-accordion':
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@18.2.13)(@types/react@18.2.28)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -414,6 +417,19 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@openpanel/nextjs@0.0.9-beta':
+    resolution: {integrity: sha512-/rCOQ889KUOFC2yoHybbqvjfmKpTb207l8uOhxTxpPRP0a8wITL8t2z+3mecL2tUcjjuKfynqvPyi60CKqFZzQ==}
+    peerDependencies:
+      next: ^12.0.0 || ^13.0.0 || ^14.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@openpanel/sdk@0.0.8-beta':
+    resolution: {integrity: sha512-Cs23tPoQqZLiG3A9C3CTPzyhurX+Q/mScaaK79/Kuvcv4vZjqUztLtLqxRx/zxeXYVbanzwR3blJCeTmABexKQ==}
+
+  '@openpanel/web@0.0.8-beta':
+    resolution: {integrity: sha512-7xwG4QhXBan4r6SH+q7MrVZPS87r6UvUGHsu7dCIWDhTex+lW3CeA0NEHRvUSfH6Z+oeQ7xstVczEb0h/VikdA==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -3131,6 +3147,19 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+
+  '@openpanel/nextjs@0.0.9-beta(next@14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@openpanel/web': 0.0.8-beta
+      next: 14.2.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
+  '@openpanel/sdk@0.0.8-beta': {}
+
+  '@openpanel/web@0.0.8-beta':
+    dependencies:
+      '@openpanel/sdk': 0.0.8-beta
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
