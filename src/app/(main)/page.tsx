@@ -1,7 +1,19 @@
 'use client';
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
-import {BugPlay, Eraser, FileDown, FilePlus, FlaskConical, FolderOpen, Hammer, Play, Save, X} from "lucide-react";
+import {
+    BugPlay,
+    Eraser,
+    FileDown,
+    FilePlus,
+    FlaskConical,
+    FolderOpen,
+    Hammer,
+    Play,
+    Rocket,
+    Save,
+    X
+} from "lucide-react";
 import {useEffect, useState} from "react";
 import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
 import {useSettingStore} from "@/stores/setting";
@@ -14,8 +26,11 @@ import {Tooltip} from "@/components/Tooltip";
 import {ActionPanel} from "@/app/(main)/components/ActionPanel";
 import {useContractStore} from "@/stores/contracts";
 import {genContractData} from "@/utils/starknet";
+import {PageEnum} from "@/components/SideBar";
+import {DeployPanel} from "@/app/(main)/components/DeployPanel";
 
 export default function EditorPage() {
+    const [enableDeploy, setEnableDeploy] = useState<boolean>(false);
     const [active, setActive] = useState(0);
     const { isReplaceIds,  availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
     const [compileResult, setCompileResult] = useState<string>("");
@@ -65,11 +80,11 @@ export default function EditorPage() {
             console.log(res, 'res');
             setCompileResult(res as string);
             setLogs([
-                ...logs,
                 {
                     timestamp: Date.now(),
                     message: res as string,
-                }
+                },
+                ...logs,
             ]);
             const contractData = await genContractData(files[active].name, res as string);
             console.log(contractData, 'dd');
@@ -80,11 +95,11 @@ export default function EditorPage() {
             console.log(res, 'res');
             setCompileResult(res as string);
             setLogs([
-                    ...logs,
                 {
                     timestamp: Date.now(),
                     message: res as string,
-                }
+                },
+                ...logs,
             ])
         }
     }
@@ -105,11 +120,11 @@ export default function EditorPage() {
         });
         console.log(res, 'res');
         setLogs([
-            ...logs,
             {
                 timestamp: Date.now(),
                 message: res as string,
-            }
+            },
+            ...logs,
         ]);
     }
 
@@ -123,11 +138,11 @@ export default function EditorPage() {
         });
         console.log(res, 'res');
         setLogs([
-            ...logs,
             {
                 timestamp: Date.now(),
                 message: res as string,
-            }
+            },
+            ...logs,
         ]);
     }
 
@@ -215,8 +230,7 @@ export default function EditorPage() {
     }
     return (
         <div className={'flex'}>
-            <ActionPanel/>
-            <div className="h-full flex flex-col flex-1 border-l">
+            <div className="h-full flex-1 border-l flex flex-col min-w-0">
                 <div className="w-full">
                     <div className="flex items-center border-b">
                         {
@@ -244,6 +258,9 @@ export default function EditorPage() {
                     <div>
                         {
                             files[active] ? <Editor
+                                options={{
+                                    fontSize: 14,
+                                }}
                                 theme={'vs-dark'}
                                 height="40vh"
                                 defaultLanguage="rust"
@@ -267,6 +284,12 @@ export default function EditorPage() {
                         <Button onClick={handleRunTest} loading={testLoading} className={'gap-1'}>
                             <BugPlay size={16}/>
                             Run Test
+                        </Button>
+                        <Button onClick={() => {
+                            setEnableDeploy(!enableDeploy);
+                        }} className={'gap-1'}>
+                            <Rocket size={16}/>
+                            Deploy
                         </Button>
                     </div>
                     <div className="md:flex gap-4 hidden">
@@ -314,9 +337,11 @@ export default function EditorPage() {
                                     logs.map((log, index) => {
                                         return (
                                             <div key={index}>
-                                                <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]</div>
-                                                <div className="text-sm"
-                                                     dangerouslySetInnerHTML={{__html: log.message}}></div>
+                                                <div className="text-sm">[{displayTimeByTimeStamp(log.timestamp)}]
+                                                </div>
+                                                <Textarea defaultValue={log.message} readOnly className="text-sm border-none p-0 min-h-[200px]" >
+
+                                                </Textarea>
                                             </div>
                                         )
                                     })
@@ -326,6 +351,7 @@ export default function EditorPage() {
                     </div>
                 </div>
             </div>
+            {enableDeploy ? <DeployPanel/> : null}
         </div>
     )
 }

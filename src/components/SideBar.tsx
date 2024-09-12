@@ -22,22 +22,22 @@ const pages = [
     {
         value: '',
         label: 'Files',
-        icon: <Files size={24}/>
+        icon: <Files size={18}/>
     },
-    {
-        value: PageEnum.DEPLOY,
-        label: 'Deploy',
-        icon: <SquareCode size={24}/>
-    },
+    // {
+    //     value: PageEnum.DEPLOY,
+    //     label: 'Deploy',
+    //     icon: <SquareCode size={24}/>
+    // },
     {
         value: PageEnum.SETTING,
         label: 'Setting',
-        icon: <Cog size={24}/>
+        icon: <Cog size={18}/>
     },
     {
         value: PageEnum.ABOUT,
         label: 'About',
-        icon: <Info size={24}/>
+        icon: <Info size={18}/>
     }
 ]
 
@@ -50,8 +50,8 @@ export const SideBar = () => {
     console.log(pathname)
 
     const handleClick = (v: string) => {
-        const params = createQueryString(searchParams, 'tab', v);
-        router.push(pathname + '?' + params);
+        // const params = createQueryString(searchParams, 'tab', v);
+        router.push(v);
     };
 
     return (
@@ -68,7 +68,7 @@ export const SideBar = () => {
                             pages.map((item, index) => {
                                 return (
                                     <Tooltip content={<p>{item.label}</p>} key={index}>
-                                        <Button size="icon" variant={`${item.value}` === tab ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => handleClick(item.value)}>
+                                        <Button size="icon" variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => handleClick(item.value)}>
                                             {item.icon}
                                         </Button>
                                     </Tooltip>

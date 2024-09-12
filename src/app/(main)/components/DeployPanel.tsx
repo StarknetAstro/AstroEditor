@@ -28,11 +28,11 @@ export const DeployPanel = () => {
             const res = await account?.declare({
                 // contract: current?.sierra,
                 // classHash: current?.classHash,
-                contract: current?.sierra,
+                contract: data, //current?.sierra,
                 classHash: classHash,
                 compiledClassHash: compiledClassHash,
             }, {
-                maxFee: 1e18
+                maxFee: 3e18
             });
             console.log(res, 'res');
         } catch (e) {
@@ -40,18 +40,22 @@ export const DeployPanel = () => {
         }
     }
     return (
-        <div className="p-6 w-[450px]">
-            <div className={'text-lg font-bold'}>Deploy</div>
-            <div>
-                {address ? <DisconnectModal/> : <ConnectModal/>}
+        <div className="p-6 flex-[0_0_280px]">
+            <div className={'flex justify-between items-center'}>
+                <div className={'text-lg font-bold'}>Deploy</div>
+                <div>
+                    {address ? <DisconnectModal/> : <ConnectModal/>}
+                </div>
             </div>
-            <div className={'mt-8'}>
-                <Button onClick={handleDeclare}>Declare</Button>
+            <div className="space-y-6">
+                <div className={'mt-8'}>
+                    <Button onClick={handleDeclare}>Declare</Button>
+                </div>
+
+                <Textarea value={v} onChange={e => setV(e.target.value)}/>
+
+                <Textarea value={casm} onChange={e => setCasm(e.target.value)}/>
             </div>
-
-            <Textarea value={v} onChange={e => setV(e.target.value)}/>
-
-            <Textarea value={casm} onChange={e => setCasm(e.target.value)}/>
         </div>
     )
 }
