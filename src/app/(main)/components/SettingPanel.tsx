@@ -7,7 +7,7 @@ import {Input} from "@/components/ui/input";
 import {useSettingStore} from "@/stores/setting";
 
 
-export default function SettingPanel() {
+export function SettingPanel() {
     const { isReplaceIds, cairoVersion, availableGas, printFullMemory, useCairoDebugPrint, setData } = useSettingStore();
 
     const setCairoVersion = (v: string) => setData({ cairoVersion: v });
