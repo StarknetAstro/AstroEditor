@@ -1,12 +1,12 @@
-import {Button} from "@/components/ui/button";
-import {Cog, Files, Info, SquareCode} from "lucide-react";
-import {usePathname, useRouter, useSearchParams} from "next/navigation";
-import {Tooltip} from "@/components/Tooltip";
+import { Button } from "@/components/ui/button";
+import { Cog, Files, Info, SquareCode } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Tooltip } from "@/components/Tooltip";
 import logo from "@/assets/logo.png";
-import {createQueryString} from "@/utils/common";
+import { createQueryString } from "@/utils/common";
 
 export enum PageEnum {
-    EDITOR = "editor",
+    EDITOR = "/",
     DEPLOY = 'deploy',
     SETTING = "setting",
     ABOUT = "about"
@@ -20,9 +20,9 @@ enum TabEnum {
 
 const pages = [
     {
-        value: '',
+        value: PageEnum.EDITOR,
         label: 'Files',
-        icon: <Files size={18}/>
+        icon: <Files size={18} />
     },
     // {
     //     value: PageEnum.DEPLOY,
@@ -32,12 +32,12 @@ const pages = [
     {
         value: PageEnum.SETTING,
         label: 'Setting',
-        icon: <Cog size={18}/>
+        icon: <Cog size={18} />
     },
     {
         value: PageEnum.ABOUT,
         label: 'About',
-        icon: <Info size={18}/>
+        icon: <Info size={18} />
     }
 ]
 
@@ -58,7 +58,7 @@ export const SideBar = () => {
         <div className={"pb-12 hidden md:block border-r h-[100vh]"}>
             <div className={'text-center py-4 flex justify-center'}>
                 <a href="https://github.com/StarknetAstro/AstroEditor" target={'_blank'}>
-                    <img src={logo.src} className={'w-10 rounded-lg'} alt=""/>
+                    <img src={logo.src} className={'w-10 rounded-lg'} alt="" />
                 </a>
             </div>
             <div className="space-y-4 py-4">
@@ -68,7 +68,7 @@ export const SideBar = () => {
                             pages.map((item, index) => {
                                 return (
                                     <Tooltip content={<p>{item.label}</p>} key={index}>
-                                        <Button size="icon" variant={`/${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => handleClick(item.value)}>
+                                        <Button size="icon" variant={`${item.value.startsWith('/') ? '' : '/'}${item.value}` === pathname ? 'secondary' : 'ghost'} className="w-12 justify-center" onClick={() => handleClick(item.value)}>
                                             {item.icon}
                                         </Button>
                                     </Tooltip>

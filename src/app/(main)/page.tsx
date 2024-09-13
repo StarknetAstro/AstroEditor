@@ -1,6 +1,6 @@
 'use client';
-import {Textarea} from "@/components/ui/textarea";
-import {Button} from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 import {
     BugPlay,
     Eraser,
@@ -14,25 +14,23 @@ import {
     Save,
     X
 } from "lucide-react";
-import {useEffect, useState} from "react";
-import {checkIsContract, displayTimeByTimeStamp} from "@/utils/common";
-import {useSettingStore} from "@/stores/setting";
-import {useAccount} from "@starknet-react/core";
-import {useCairoWasm} from "@/hooks/useCairoWasm";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {cn} from "@/lib/utils";
-import {Editor} from "@monaco-editor/react";
-import {Tooltip} from "@/components/Tooltip";
-import {ActionPanel} from "@/app/(main)/components/ActionPanel";
-import {useContractStore} from "@/stores/contracts";
-import {genContractData} from "@/utils/starknet";
-import {PageEnum} from "@/components/SideBar";
-import {DeployPanel} from "@/app/(main)/components/DeployPanel";
+import { useEffect, useState } from "react";
+import { checkIsContract, displayTimeByTimeStamp } from "@/utils/common";
+import { useSettingStore } from "@/stores/setting";
+import { useAccount } from "@starknet-react/core";
+import { useCairoWasm } from "@/hooks/useCairoWasm";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { Tooltip } from "@/components/Tooltip";
+import { useContractStore } from "@/stores/contracts";
+import { genContractData } from "@/utils/starknet";
+import { DeployPanel } from "@/app/(main)/components/DeployPanel";
+import { CairoEditor } from "@/components/Editor";
 
 export default function EditorPage() {
     const [enableDeploy, setEnableDeploy] = useState<boolean>(false);
     const [active, setActive] = useState(0);
-    const { isReplaceIds,  availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
+    const { isReplaceIds, availableGas, printFullMemory, useCairoDebugPrint } = useSettingStore();
     const [compileResult, setCompileResult] = useState<string>("");
     const [files, setFiles] = useState([
         {
@@ -45,7 +43,7 @@ export default function EditorPage() {
         message: string
     }[]>([]);
     const { account } = useAccount();
-    const { compileCairo, compileContract, compileLoading, runCairo, runLoading, testLoading, runTests} = useCairoWasm();
+    const { compileCairo, compileContract, compileLoading, runCairo, runLoading, testLoading, runTests } = useCairoWasm();
 
     console.log(account, active, files, 'acc')
 
@@ -76,7 +74,7 @@ export default function EditorPage() {
         }
         console.log(checkIsContract(cairo_program))
         if (checkIsContract(cairo_program)) {
-            const res = await compileContract({starknetContract: cairo_program, replaceIds: isReplaceIds, allowWarnings: true});
+            const res = await compileContract({ starknetContract: cairo_program, replaceIds: isReplaceIds, allowWarnings: true });
             console.log(res, 'res');
             setCompileResult(res as string);
             setLogs([
@@ -89,9 +87,9 @@ export default function EditorPage() {
             const contractData = await genContractData(files[active].name, res as string);
             console.log(contractData, 'dd');
 
-            setContracts({[files[active].name]: contractData})
+            setContracts({ [files[active].name]: contractData })
         } else {
-            const res = await compileCairo({cairoProgram: cairo_program, replaceIds: isReplaceIds});
+            const res = await compileCairo({ cairoProgram: cairo_program, replaceIds: isReplaceIds });
             console.log(res, 'res');
             setCompileResult(res as string);
             setLogs([
@@ -168,11 +166,11 @@ export default function EditorPage() {
 
     const removeFile = (index: number) => {
         setFiles(files?.filter((item, i) => i !== index));
-        if(index===active) {
+        if (index === active) {
             const newIndex = active === 0 ? 0 : active - 1;
             console.log('new', newIndex)
             setActive(newIndex);
-        } else if(index < active) {
+        } else if (index < active) {
             setActive(active - 1);
         }
     }
@@ -181,7 +179,7 @@ export default function EditorPage() {
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 updateFileByIndex(active, e.target?.result as string);
             }
             reader.readAsText(file);
@@ -189,13 +187,13 @@ export default function EditorPage() {
     }
 
     const saveFile = async (fileName: string, content: string, isComplied?: boolean) => {
-        if(!content) {
+        if (!content) {
             return;
         }
 
         let options = {};
 
-        if(isComplied) {
+        if (isComplied) {
             options = {
                 suggestedName: 'astro_compiled.sierra',
                 types: [{
@@ -203,7 +201,7 @@ export default function EditorPage() {
                     accept: { 'text/plain': ['.sierra'] },
                 }],
             };
-            if(content.includes("sierra_program")) {
+            if (content.includes("sierra_program")) {
                 options = {
                     suggestedName: 'astro_compiled.json',
                     types: [{
@@ -239,31 +237,25 @@ export default function EditorPage() {
                                     <div key={i} onClick={() => {
                                         setActive(i);
                                     }}
-                                         className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
+                                        className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
                                         {file.name}
                                         {i !== 0 && <X size={16} onClick={(e) => {
                                             removeFile(i);
                                             e.stopPropagation();
-                                        }}/>}
+                                        }} />}
                                     </div>
                                 )
                             })
                         }
                         <div className="ml-auto mr-4">
                             <Button onClick={addTab} variant={'outline'} size={'icon'} className={'h-8 w-8'}>
-                                <FilePlus size={16}/>
+                                <FilePlus size={16} />
                             </Button>
                         </div>
                     </div>
                     <div>
                         {
-                            files[active] ? <Editor
-                                options={{
-                                    fontSize: 14,
-                                }}
-                                theme={'vs-dark'}
-                                height="40vh"
-                                defaultLanguage="rust"
+                            files[active] ? <CairoEditor
                                 value={files[active].content}
                                 onChange={(v) => updateFileByIndex(active, v || '')}
                             /> : null
@@ -274,38 +266,38 @@ export default function EditorPage() {
                 <div className="toolbar flex justify-between gap-4 my-4 px-4">
                     <div className="flex gap-4">
                         <Button onClick={handleCompile} loading={compileLoading} className={'gap-1'}>
-                            <Hammer size={16}/>
+                            <Hammer size={16} />
                             Compile
                         </Button>
                         <Button onClick={handleRun} loading={runLoading} className={'gap-1'}>
-                            <Play size={16}/>
+                            <Play size={16} />
                             Run Cairo
                         </Button>
                         <Button onClick={handleRunTest} loading={testLoading} className={'gap-1'}>
-                            <BugPlay size={16}/>
+                            <BugPlay size={16} />
                             Run Test
                         </Button>
-                        <Button onClick={() => {
+                        {/* <Button onClick={() => {
                             setEnableDeploy(!enableDeploy);
                         }} className={'gap-1'}>
-                            <Rocket size={16}/>
+                            <Rocket size={16} />
                             Deploy
-                        </Button>
+                        </Button> */}
                     </div>
                     <div className="md:flex gap-4 hidden">
                         <Tooltip content={'Open file'}>
                             <div className={'relative'}>
                                 <Button className="w-8 h-8" variant={'outline'} size={'icon'}>
-                                    <FolderOpen size={16}/>
+                                    <FolderOpen size={16} />
                                 </Button>
                                 <input type="file" onChange={handleOpenFile}
-                                       className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'}/>
+                                    className={'cursor-pointer absolute top-0 left-0 w-full h-full opacity-0'} />
                             </div>
                         </Tooltip>
                         <Tooltip content={'Save source code'}>
                             <Button variant={'outline'} className="w-8 h-8" size={'icon'}
-                                    onClick={() => saveFile('astro.cairo', files[active].content)}>
-                                <FileDown size={16}/>
+                                onClick={() => saveFile('astro.cairo', files[active].content)}>
+                                <FileDown size={16} />
                             </Button>
                         </Tooltip>
                     </div>
@@ -318,14 +310,14 @@ export default function EditorPage() {
                         <div className="flex gap-2">
                             <Tooltip content={'Save compile result'}>
                                 <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                        onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
-                                    <Save size={16}/>
+                                    onClick={() => saveFile('astro_compiled.sierra', compileResult, true)}>
+                                    <Save size={16} />
                                 </Button>
                             </Tooltip>
                             <Tooltip content={'Clear'}>
                                 <Button variant={'outline'} size={'icon'} className="w-8 h-8"
-                                        onClick={() => setLogs([])}>
-                                    <Eraser size={16}/>
+                                    onClick={() => setLogs([])}>
+                                    <Eraser size={16} />
                                 </Button>
                             </Tooltip>
                         </div>
@@ -351,7 +343,7 @@ export default function EditorPage() {
                     </div>
                 </div>
             </div>
-            {enableDeploy ? <DeployPanel/> : null}
+            {enableDeploy ? <DeployPanel /> : null}
         </div>
     )
 }
