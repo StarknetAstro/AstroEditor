@@ -26,6 +26,7 @@ import { useContractStore } from "@/stores/contracts";
 import { genContractData } from "@/utils/starknet";
 import { DeployPanel } from "@/app/(main)/components/DeployPanel";
 import { CairoEditor } from "@/components/Editor";
+import {Tab} from "@/components/Tabs";
 
 export default function EditorPage() {
     const [enableDeploy, setEnableDeploy] = useState<boolean>(false);
@@ -230,24 +231,27 @@ export default function EditorPage() {
         <div className={'flex'}>
             <div className="h-full flex-1 border-l flex flex-col min-w-0">
                 <div className="w-full">
-                    <div className="flex items-center border-b">
-                        {
-                            files?.map((file, i) => {
-                                return (
-                                    <div key={i} onClick={() => {
-                                        setActive(i);
-                                    }}
-                                        className={cn('flex items-center border-l border-r px-4 py-2 cursor-pointer gap-2', active === i ? 'border-t-2 border-t-primary' : '')}>
-                                        {file.name}
-                                        {i !== 0 && <X size={16} onClick={(e) => {
-                                            removeFile(i);
-                                            e.stopPropagation();
-                                        }} />}
-                                    </div>
-                                )
-                            })
-                        }
-                        <div className="ml-auto mr-4">
+                    <div className="flex items-center justify-between border-b p-2 ">
+                        <div className="flex items-center gap-2 overflow-auto tab-scroll flex-1">
+                            {
+                                files?.map((file, i) => {
+                                    return (
+                                        <Tab key={i} onClick={() => {
+                                            setActive(i);
+                                        }}
+                                             selected={active === i}
+                                             closable={i !== 0}
+                                             onClose={() => {
+                                                 removeFile(i);
+                                             }}
+                                        >
+                                            {file.name}
+                                        </Tab>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className="mr-4">
                             <Button onClick={addTab} variant={'outline'} size={'icon'} className={'h-8 w-8'}>
                                 <FilePlus size={16} />
                             </Button>
