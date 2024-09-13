@@ -19,6 +19,13 @@ export const CairoEditor: React.FC<CairoEditorProps> = ({ value, onChange, heigh
 
             monaco.languages.registerCompletionItemProvider('cairo', {
                 provideCompletionItems: (model, position) => {
+                    const wordInfo = model.getWordUntilPosition(position);
+                    const range = {
+                        startLineNumber: position.lineNumber,
+                        endLineNumber: position.lineNumber,
+                        startColumn: wordInfo.startColumn,
+                        endColumn: wordInfo.endColumn
+                    };
                     const suggestions = [];
                     for (const [name, snippet] of Object.entries(cairoSnippets)) {
                         suggestions.push({
@@ -28,6 +35,7 @@ export const CairoEditor: React.FC<CairoEditorProps> = ({ value, onChange, heigh
                             insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                             documentation: snippet.description,
                             detail: snippet.description,
+                            range: range
                         });
                     }
                     return { suggestions };
