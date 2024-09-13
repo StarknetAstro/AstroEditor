@@ -16,7 +16,7 @@ export default function Home({children}: {children: ReactNode}) {
                 <div className={'p-0 h-[100vh]'}>
                     <div className="editor flex flex-1">
                         <SideBar/>
-                        <div className="main flex-1">
+                        <div className="main flex-1 min-w-0">
                             {children}
                         </div>
                     </div>
