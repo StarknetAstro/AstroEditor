@@ -4,7 +4,7 @@ import {Contract} from "@/types";
 export async function genContractData (
     contractName: string,
     compileResult: string,
-): Promise<Contract | null> {
+): Promise<Partial<Contract> | null> {
     const data = JSON.parse(compileResult)
     // const sierra = data.sierra_program;
     // const casm = await JSON.parse(casmFile)

@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Cog, Files, Info, SquareCode } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Tooltip } from "@/components/Tooltip";
 import logo from "@/assets/logo.png";
-import { createQueryString } from "@/utils/common";
 
 export enum PageEnum {
     EDITOR = "/",
-    DEPLOY = 'deploy',
     SETTING = "setting",
     ABOUT = "about"
 }
@@ -45,8 +43,6 @@ const pages = [
 export const SideBar = () => {
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
-    const tab = searchParams.get('tab') as TabEnum;
     console.log(pathname)
 
     const handleClick = (v: string) => {
