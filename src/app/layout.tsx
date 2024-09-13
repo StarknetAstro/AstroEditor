@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import "./globals.css";
 import {ThemeProvider} from "next-themes";
-import { Analytics } from '@vercel/analytics/react';
+import { GoogleAnalytics } from '@next/third-parties/google'
 import React from "react";
 import {OpenpanelProvider} from "@openpanel/nextjs";
 
@@ -28,7 +28,7 @@ export default function RootLayout({
           >
               {children}
           </ThemeProvider>
-          <Analytics/>
+          <GoogleAnalytics gaId="G-KMNYTQF108" />
           <OpenpanelProvider
               clientId="265f0bfc-cbd5-4f47-8feb-3713493fe25b"
               trackScreenViews={true}
