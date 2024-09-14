@@ -7,7 +7,7 @@ import {Input} from "@/components/ui/input";
 import {useSettingStore} from "@/stores/setting";
 
 
-export default function Setting() {
+export default function SettingPanel() {
     const { isReplaceIds, cairoVersion, availableGas, printFullMemory, useCairoDebugPrint, setData } = useSettingStore();
 
     const setCairoVersion = (v: string) => setData({ cairoVersion: v });
@@ -21,7 +21,10 @@ export default function Setting() {
     const setIsReplaceIds = (v: boolean) => setData({ isReplaceIds: v });
 
     return (
-        <div id="Settings" className="space-y-4 px-4 pt-6 lg:px-8">
+        <div className="space-y-4 p-6">
+            <div className={'text-lg font-bold'}>
+                Settings
+            </div>
             <SectionCard title="Cairo Compiler settings" className={'space-y-4'}>
                 <div className="space-y-4">
                     <div className="flex items-center space-x-2">

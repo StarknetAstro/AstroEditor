@@ -109,3 +109,7 @@ body {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.tab-scroll::-webkit-scrollbar {
+  display: none;
+}

@@ -6,7 +6,7 @@ export const SectionCard = ({title, children, className}: {title: ReactNode; chi
     return (
         <Card className={className}>
             <CardHeader>
-                <CardTitle>{title}</CardTitle>
+                <CardTitle className={'text-md'}>{title}</CardTitle>
             </CardHeader>
             <CardContent>
                 {children}
