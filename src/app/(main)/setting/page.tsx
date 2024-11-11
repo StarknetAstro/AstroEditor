@@ -44,7 +44,7 @@ export default function SettingPanel() {
                         <Select disabled value={cairoVersion} onChange={setCairoVersion} className={'w-20'} options={[
                             {
                                 value: '2.0',
-                                label: '2.6.3'
+                                label: '2.7.1'
                             },
                             {
                                 value: '1.10',
