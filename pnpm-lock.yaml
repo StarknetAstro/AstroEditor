@@ -183,8 +183,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.3.3)
       wasm-cairo:
-        specifier: ^0.9.4
-        version: 0.9.4
+        specifier: ^0.10.2
+        version: 0.10.2
       zod:
         specifier: ^3.22.2
         version: 3.22.4
@@ -3006,8 +3006,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  wasm-cairo@0.9.4:
-    resolution: {integrity: sha512-tkwlDNsP0LOEc/Uvo+UcdCUZSkpPV+OrD607/2txt0GPmsAGkMgtdPAnqdqXVegHI1Fwa+t0m37fCY779U33Yg==}
+  wasm-cairo@0.10.2:
+    resolution: {integrity: sha512-EstsXzGx11dzg+77k8e4c1w/cGXnPsjMVwrp4VmjTxT3adfvBV9eKLHO9cU2tfB4XJKX6HVBjGWYjqZ+7WCCkA==}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -6220,7 +6220,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  wasm-cairo@0.9.4: {}
+  wasm-cairo@0.10.2: {}
 
   webidl-conversions@3.0.1: {}
 
